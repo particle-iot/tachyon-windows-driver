@@ -32,13 +32,13 @@ jobs:
         curl -L ${{ env.WDK_URL }} -o wdk-redist.msi
         curl -L ${{ env.LIBUSB0_URL }} -o libusb0-redist.zip
         curl -L ${{ env.LIBUSBK_URL }} -o libusbk-redist.7z
-        msiexec /a wdk-redist.msi /qn TARGETDIR=%CD%\wdk
+        msiexec /a wdk-redist.msi /qn TARGETDIR=%CD%\libwdi\wdk
         7z x libusb0-redist.zip
         7z x libusbk-redist.7z
         del *.zip
         del *.7z
-        move libusb-win32* libusb0
-        move libusbK* libusbk
+        move libusb-win32* libwdi\libusb0
+        move libusbK* libwdi\libusbk
       
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
@@ -46,4 +46,4 @@ jobs:
     - name: Build
       shell: cmd
       run: |
-        msbuild ${{ env.SOLUTION_FILE_PATH }} /m /p:Configuration=Release,Platform=x64,BuildMacros=${{ env.BUILD_MACROS }}
+        msbuild ${{ env.SOLUTION_FILE_PATH }} /m /p:Configuration=Release,Platform=Win32,BuildMacros=${{ env.BUILD_MACROS }}
