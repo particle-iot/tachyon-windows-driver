@@ -1,5 +1,7 @@
 ; Installs a driver for the Tachyon System Update Mode
-;
+
+!define COMPANY_NAME "Particle Industries, Inc"
+!define MUI_ICON "assets\particle.ico"
 
 ; Use modern interface
   !include MUI2.nsh
@@ -11,7 +13,13 @@
   ShowInstDetails       show
   RequestExecutionLevel admin
 
-; Pages
+; Welcome Page
+  !define MUI_WELCOMEFINISHPAGE_BITMAP "assets\particle.bmp"
+  !define MUI_WELCOMEPAGE_TITLE "Install the ${PRODUCT_NAME}"
+  !define /file MUI_WELCOMEPAGE_TEXT "welcome.txt"
+  !insertmacro MUI_PAGE_WELCOME
+
+; Installation Page
   !insertmacro MUI_PAGE_INSTFILES
 
 ;Languages
@@ -44,8 +52,8 @@ Section "tachyon-driver" SecDriver
   SetOutPath $TEMP
   File "libwdi\Win32\Release\examples\wdi-simple.exe"
 
-  DetailPrint "Installing driver"
-  nsExec::ExecToLog '"$TEMP\wdi-simple.exe" --name "Particle Tachyon (System Update)" --vid 0x05c6 --pid 0x9008 --progressbar=$HWNDPARENT --timeout 120000'
+  nsExec::ExecToLog '"$TEMP\wdi-simple.exe" --manufacturer Particle --name "Tachyon (System Update)" --type 0 --vid 0x05c6 --pid 0x9008 --progressbar=$HWNDPARENT --timeout 120000'
+  nsExec::ExecToLog '"$TEMP\wdi-simple.exe" --manufacturer Particle --name "Tachyon" --type 0 --vid 0x05c6 --pid 0x9501 --progressbar=$HWNDPARENT --timeout 120000'
 
   Delete "$TEMP\wdi-simple.exe"
 SectionEnd
