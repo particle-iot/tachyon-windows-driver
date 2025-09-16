@@ -8,34 +8,17 @@
 ; General
   Name                  "Tachyon Driver Installation"
   OutFile               "tachyon-driver-setup.exe"
-  InstallDir            $PROGRAMFILES\tachyon-driver
-  InstallDirRegKey      HKLM "Software\tachyon-driver" "Install_Dir"
   ShowInstDetails       show
   RequestExecutionLevel admin
 
 ; Pages
-  !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_INSTFILES
-  !insertmacro MUI_UNPAGE_INSTFILES 
-  !insertmacro MUI_UNPAGE_FINISH
 
 ;Languages
   !insertmacro MUI_LANGUAGE "English"
 
-; Installer
-Section "tachyon-driver" SecDummy
-  SetOutPath $INSTDIR
-  File "wdi-simple.exe"
-  WriteRegStr HKLM SOFTWARE\tachyon-driver "Install_Dir" "$INSTDIR"
-  ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\tachyon-driver" "DisplayName" "libwdi example"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\tachyon-driver" "UninstallString" '"$INSTDIR\uninstall.exe"'
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\tachyon-driver" "NoModify" 1
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\tachyon-driver" "NoRepair" 1
-  WriteUninstaller "uninstall.exe"
-SectionEnd
-
-; Call wdi-simple
+; Install driver
+; wdi-simple usage
 ;
 ; -n, --name <name>          set the device name
 ; -f, --inf <name>           set the inf name
@@ -57,17 +40,12 @@ SectionEnd
 ;                            pending installations
 ; -l, --log                  set log level (0=debug, 4=none)
 ; -h, --help                 display usage
-Section "wdi-simple"
-  DetailPrint "Running $INSTDIR\wdi-simple.exe"
-  nsExec::ExecToLog '"$INSTDIR\wdi-simple.exe" --name "XBox Controller" --vid 0x045e --pid 0x0289 --progressbar=$HWNDPARENT --timeout 120000'
-SectionEnd
+Section "tachyon-driver" SecDriver
+  SetOutPath $TEMP
+  File "libwdi\Win32\Release\examples\wdi-simple.exe"
 
-; Uninstaller
-Section "Uninstall"
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\tachyon-driver"
-  DeleteRegKey HKLM SOFTWARE\tachyon-driver
-  Delete $INSTDIR\wdi-simple.exe
-  Delete $INSTDIR\uninstall.exe
-  RMDir "$SMPROGRAMS\tachyon-driver"
-  RMDir "$INSTDIR"
+  DetailPrint "Installing driver"
+  nsExec::ExecToLog '"$TEMP\wdi-simple.exe" --name "Particle Tachyon (System Update)" --vid 0x05c6 --pid 0x9008 --progressbar=$HWNDPARENT --timeout 120000'
+
+  Delete "$TEMP\wdi-simple.exe"
 SectionEnd

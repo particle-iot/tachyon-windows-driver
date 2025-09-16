@@ -26,6 +26,18 @@ jobs:
         submodules: recursive
         path: libwdi
 
+    - name: Install NSIS
+      run: choco install nsis -y
+    - name: Add NSIS to PATH
+      run: echo "${env:ProgramFiles(x86)}\NSIS\Bin" >> $env:GITHUB_PATH
+    - name: Debug PATH and NSIS install
+      shell: cmd
+      run: |
+        echo PATH is: %PATH%
+        echo.
+        echo Checking NSIS folder...
+        dir "%ProgramFiles(x86)%\NSIS" /s
+        
     - name: Download support files
       shell: cmd
       run: |
@@ -43,7 +55,18 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
 
-    - name: Build
+    - name: Build wdi-simple.exe
       shell: cmd
       run: |
         msbuild ${{ env.SOLUTION_FILE_PATH }} /m /p:Configuration=Release,Platform=Win32,BuildMacros=${{ env.BUILD_MACROS }}
+        
+    - name: Build installer
+      run: |
+        
+        makensis tachyon-driver-setup.nsi
+
+    - name: Upload installer
+      uses: actions/upload-artifact@v4
+      with:
+        name: tachyon-driver-setup
+        path: tachyon-driver-setup.exe
