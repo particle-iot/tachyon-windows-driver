@@ -1,1 +1,3 @@
-This installer installs drivers to set up the Particle Tachyon single board computer.
+This installer installs drivers to reprogram and communicate with the Particle Tachyon single board computer.
+
+After installing the drivers, you'll be able to use the Particle Command Line Interface (CLI) to set up your Tachyon by running the command "particle tachyon setup".

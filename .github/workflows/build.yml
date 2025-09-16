@@ -59,14 +59,36 @@ jobs:
       shell: cmd
       run: |
         msbuild ${{ env.SOLUTION_FILE_PATH }} /m /p:Configuration=Release,Platform=Win32,BuildMacros=${{ env.BUILD_MACROS }}
+
+    - name: Sign wdi-simple.exe
+      uses: azure/trusted-signing-action@v0
+      with:
+        azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+        endpoint: ${{ secrets.AZURE_ENDPOINT }}
+        trusted-signing-account-name: ${{ secrets.AZURE_CODE_SIGNING_NAME }}
+        certificate-profile-name: ${{ secrets.AZURE_CERT_PROFILE_NAME }}
+        files: ${{ github.workspace }}\libwdi\Win32\Release\examples\wdi-simple.exe
         
     - name: Build installer
       run: |
-        
         makensis tachyon-driver-setup.nsi
+
+    - name: Sign installer
+      uses: azure/trusted-signing-action@v0
+      with:
+        azure-tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        azure-client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        azure-client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+        endpoint: ${{ secrets.AZURE_ENDPOINT }}
+        trusted-signing-account-name: ${{ secrets.AZURE_CODE_SIGNING_NAME }}
+        certificate-profile-name: ${{ secrets.AZURE_CERT_PROFILE_NAME }}
+        files: ${{ github.workspace }}\tachyon-driver-setup.exe
 
     - name: Upload installer
       uses: actions/upload-artifact@v4
       with:
         name: tachyon-driver-setup
         path: tachyon-driver-setup.exe
+

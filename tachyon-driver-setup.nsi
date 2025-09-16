@@ -15,7 +15,7 @@
 
 ; Welcome Page
   !define MUI_WELCOMEFINISHPAGE_BITMAP "assets\particle.bmp"
-  !define MUI_WELCOMEPAGE_TITLE "Install the ${PRODUCT_NAME}"
+  !define MUI_WELCOMEPAGE_TITLE "Install the Tachyon Driver"
   !define /file MUI_WELCOMEPAGE_TEXT "welcome.txt"
   !insertmacro MUI_PAGE_WELCOME
 
